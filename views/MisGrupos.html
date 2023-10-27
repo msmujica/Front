@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Grupos</title>
+    <link rel="stylesheet" href="../CSS/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script>
+
+        function Modificar(id) {
+
+            $(document).ready(function () {
+                $("#btnUpdate").click(function () {
+                    var Nombre = $("#nombre").val();
+                    var Descripcion = $("#descripcion").val();
+
+                    var data = {
+                        "Nombre": Nombre,
+                        "Descripcion": Descripcion
+                    }
+                    jQuery.ajax({
+                        url: 'http://localhost:8001/api/v1/GrupoUpdate/' + id,
+
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                        },
+                        type: 'PUT',
+                        data: data,
+
+                        success: function (data) {
+
+                            alert("Modificado");
+                            
+                        location.href = "MisGrupos.html";
+                        },
+
+                        error: function (data) {
+                            alert("Credenciales invalidas");
+                        }
+
+                    });
+                });
+            });
+
+        }
+
+        function Eliminar(id) {
+
+            $(document).ready(function () {
+
+                jQuery.ajax({
+
+                    url: 'http://localhost:8001/api/v1/Grupo/' + id,
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                    },
+                    type: 'DELETE',
+
+                    success: function (data) {
+                        alert("Grupo Eliminado");
+                        location.href = "MisGrupos.html";
+                    },
+
+                    error: function (data) {
+                        alert("Invalido");
+                    }
+                });
+
+            });
+        }
+
+
+        $(document).ready(function () {
+
+
+
+            jQuery.ajax({
+                url: 'http://127.0.0.1:8001/api/v1/MyGroups',
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                },
+                type: 'GET',
+                success: function (data) {
+                    data.forEach(element => {
+                        console.log(data);
+                        $('#tabla').append('<tr><td>' + element.id + '</td><td>' + element.nombre + '</td><td>' + element.descripcion + '</td><td>' + "<button id='btnEliminar' onclick='Eliminar(" + element.id + ")'>Eliminar</button>" +
+                            '</td><td>' + "<button id='btnModificar' onclick='Modificar(" + element.id + ")' data-bs-toggle='modal' data-bs-target='#staticBackdrop'>Crear Grupo</button>" + '</td></tr>');
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="grupos">
+        <table id="tabla" border="1">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Descricpion</th>
+                </tr>
+            </thead>
+
+        </table>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="Modifcate">
+
+                    Nombre: <input type="text" name="nombre" id="nombre"> <br>
+                    Descripcion: <input type="text" name="descripcion" id="descripcion"> <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate"
+                        data-bs-dismiss="modal">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JS/bootstrap.min.js"></script>
+
+</body>
+
+</html>
