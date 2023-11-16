@@ -4,39 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Tarea</title>
+    <title>Document</title>
     <link rel="stylesheet" href="../CSS/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script>
+        function getDataUrl(name) {
+            return new URLSearchParams(window.location.search).get(name)
+        }
+
         $(document).ready(function () {
-            $("#btnCrearGrupo").click(function () {
-                var nombre = $("#nombre").val();
-                var descripcion = $("#descripcion").val();
+            var id = getDataUrl("id")
+
+            $("#btnUpdate").click(function () {
+
+                var Nombre = $("#nombre").val();
+                var Descripcion = $("#descripcion").val();
 
                 var data = {
-                    "Nombre": nombre,
-                    "Descripcion": descripcion,
+                    "Nombre": Nombre,
+                    "Descripcion": Descripcion
                 }
                 jQuery.ajax({
-                    url: 'http://localhost:8001/api/v1/GrupoCreate',
+                    url: 'http://localhost:8001/api/v1/GrupoUpdate/' + id,
+
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("accessToken")
                     },
-                    type: 'POST',
+                    type: 'PUT',
                     data: data,
-
                     success: function (data) {
-                        alert("Grupo Creado");
-                        location.href = "Home.html";
-                    },
 
+                        alert("Modificado");
+
+                        location.href = "MisGrupos.html";
+                    },
                     error: function (data) {
-                        alert("Invalido");
+                        alert("Credenciales invalidas");
                     }
 
                 });
             });
-        });  
+        });
+
+
     </script>
 </head>
 
@@ -69,7 +79,7 @@
                     style="background-color: #E9E9E9;">
             </div>
             <div class="d-grid gap-2 col-6 mx-auto" style="margin-top: 50px;">
-                <button class="btn btn-primary" type="button" id="btnCrearGrupo"
+                <button class="btn btn-primary" type="button" id="btnUpdate"
                     style="font-family: Inknut Antiqua; font-size: 20px;">Ingresar</button>
             </div>
         </form>
@@ -84,5 +94,4 @@
 
     <script src="JS/bootstrap.min.js"></script>
 </body>
-
 </html>
