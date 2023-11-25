@@ -9,6 +9,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script>
 
+        function LogOut() {
+            jQuery.ajax({
+                url: 'http://localhost:8000/api/v1/logout',
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                },
+                type: 'GET',
+                success: function () {
+                    localStorage.removeItem("accessToken")
+                    window.location.replace("../index.html");
+                }
+            });
+        }
+
         function getDataUrl(name) {
             return new URLSearchParams(window.location.search).get(name)
         }
@@ -18,16 +32,16 @@
             window.location.replace("CrearTarea.html?id=" + id);
         }
 
-        function VerModificar(id){
+        function VerModificar(id) {
             var idGrupo = getDataUrl("id")
             window.location.replace("ModificarTarea.html?id=" + id + "&idGrupo=" + idGrupo)
         }
 
-        function IrModificarGrupo(id){
+        function IrModificarGrupo(id) {
             window.location.replace("ModificarGrupo.html?id=" + id)
         }
 
-        function Eliminar(id){
+        function Eliminar(id) {
             var idVerTarea = getDataUrl("id")
 
             $(document).ready(function () {
@@ -49,7 +63,7 @@
             });
         }
 
-        function EliminarGrupo(id){
+        function EliminarGrupo(id) {
             $(document).ready(function () {
                 jQuery.ajax({
                     url: 'http://localhost:8001/api/v1/Grupo/' + id,
@@ -83,14 +97,12 @@
                         if (element.Rol === "Administrador") {
                             $('#menu').append(
                                 '<a href="#" class="btn btn-primary" onclick="IrCrear()">Crear Tarea</a>' +
-                                '<a href="#" class="btn btn-primary" onclick="IrModificarGrupo('+ id +')">Modificar Grupo</a>' +
-                                '<a href="#" class="btn btn-primary" onclick="EliminarGrupo('+ id +')">Eliminar Grupo</a>' 
+                                '<a href="#" class="btn btn-primary" onclick="IrModificarGrupo(' + id + ')">Modificar Grupo</a>' +
+                                '<a href="#" class="btn btn-primary" onclick="EliminarGrupo(' + id + ')">Eliminar Grupo</a>'
                             );
                             return getData(element.Rol)
                         } else {
-                            $('#menu').append(
-                                '<a>Precisas mejores permisos pa!</a>'
-                            );
+                            return getData(element.Rol);
                         }
                     });
                 }
@@ -110,8 +122,13 @@
                 success: function (data) {
                     console.log(data);
                     if (data.length === 0) {
+                        if (Rol === "Administrador") {
+                            $('#cards').append(
+                                '<p>No hay nada ingresado por favor ingresa alguna Tarea</p>'
+                            );
+                        }
                         $('#cards').append(
-                            '<p>No hay nada ingresado por favor ingresa alguna Tarea</p>'
+                            '<p>Espera a que algun Administrador Ingrese alguna Tarea</p>'
                         );
                     } else {
                         data.forEach(element => {
@@ -179,8 +196,8 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-link" href="Home.html" style="color:#DADADA;">Home</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">My Groups</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">Log-Out</a>
+                    <a class="nav-link" href="MisGrupos.html" style="color:#DADADA;">My Groups</a>
+                    <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
                 </div>
             </div>
 
@@ -196,7 +213,7 @@
             <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavAltMarkup2">
                 <div class="navbar-nav text-end">
                     <a class="nav-link" href="#" style="color:#DADADA;">Profile</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">Log-Out</a>
+                    <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
                 </div>
             </div>
     </nav>

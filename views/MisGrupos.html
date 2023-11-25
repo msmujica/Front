@@ -8,11 +8,25 @@
     <link rel="stylesheet" href="../CSS/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script>
-        function VerModificar(id){
+        function LogOut() {
+            jQuery.ajax({
+                url: 'http://localhost:8000/api/v1/logout',
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                },
+                type: 'GET',
+                success: function () {
+                    localStorage.removeItem("accessToken")
+                    window.location.replace("../index.html");
+                }
+            });
+        }
+
+        function VerModificar(id) {
             window.location.replace("ModificarGrupo.html?id=" + id)
         }
 
-        function VerTareasPorGrupo(id){
+        function VerTareasPorGrupo(id) {
             window.location.replace("VerTarea.html?id=" + id)
         }
 
@@ -31,32 +45,30 @@
                         );
                     } else {
                         data.forEach(element => {
-                        console.log(data);
-                        $('#cards').append(
-                            '<a onclick=VerTareasPorGrupo('+ element.id +')>' +
-                            '<div class="col-sm-4">' +
-                            '<div class="card">' +
-                            '<div class="card-body">' +
-                            '<h5 class="card-title">' + element.nombre + '</h5>' +
-                            '<p class="card-text">' + element.descripcion + '</p>' +
-                            '<a href="#" class="btn btn-primary" onclick=VerModificar(' + element.id + ')>Modificar</a>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '</a>');
-                    });
+                            console.log(data);
+                            $('#cards').append(
+                                '<div class="col-sm-4">' +
+                                '<div class="card">' +
+                                '<div class="card-body">' +
+                                '<h5 class="card-title">' + element.nombre + '</h5>' +
+                                '<p class="card-text">' + element.descripcion + '</p>' +
+                                '<a href="#" class="btn btn-primary" onclick=VerTareasPorGrupo(' + element.id + ')>VerTarea</a>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>');
+                        });
                     }
                 },
                 error: function (data) {
                     $('#Error').append(
-                            '<div class="col-sm-4">' +
-                            '<div class="card">' +
-                            '<div class="card-body">' +
-                            '<h5 class="card-title"> No hay nada</h5>' +
-                            '<p class="card-text">nasge</p>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>');
+                        '<div class="col-sm-4">' +
+                        '<div class="card">' +
+                        '<div class="card-body">' +
+                        '<h5 class="card-title"> No hay nada</h5>' +
+                        '<p class="card-text">nasge</p>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>');
                 }
             });
         });
@@ -95,7 +107,7 @@
                 <div class="navbar-nav">
                     <a class="nav-link" href="Home.html" style="color:#DADADA;">Home</a>
                     <a class="nav-link" href="#" style="color:#DADADA;">My Groups</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">Log-Out</a>
+                    <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
                 </div>
             </div>
 
@@ -111,7 +123,7 @@
             <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavAltMarkup2">
                 <div class="navbar-nav text-end">
                     <a class="nav-link" href="#" style="color:#DADADA;">Profile</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">Log-Out</a>
+                    <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
                 </div>
             </div>
     </nav>

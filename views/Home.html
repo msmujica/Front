@@ -7,6 +7,74 @@
     <title>Document</title>
     <link rel="stylesheet" href="../CSS/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script>
+        function LogOut() {
+            jQuery.ajax({
+                url: 'http://localhost:8000/api/v1/logout',
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                },
+                type: 'GET',
+                success: function () {
+                    localStorage.removeItem("accessToken")
+                    window.location.replace("../index.html");
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#btnUnirseGrupo").click(function () {
+                var idGrupo = $("#idGrupo").val();
+
+                var data = {
+                    "IdGrupo": idGrupo
+                }
+                jQuery.ajax({
+                    url: 'http://localhost:8001/api/v1/Unirse',
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                    },
+                    type: 'POST',
+                    data: data,
+
+                    success: function (data) {
+                        alert("Te has unido al Grupo");
+                        window.location.replace("VerTarea.html?id=" + idGrupo)
+                    },
+
+                    error: function (data) {
+                        alert("Porfavor Ingresa un codigo valido");
+                    }
+
+                });
+            });
+
+            $("#btnMensaje").click(function () {
+                var Mensaje = $("#Mensaje").val();
+
+                var data = {
+                    "subject": Mensaje
+                }
+                jQuery.ajax({
+                    url: 'http://localhost:8001/api/v1/SendHelp',
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                    },
+                    type: 'POST',
+                    data: data,
+
+                    success: function (data) {
+                        alert("Email Enviado");
+                    },
+
+                    error: function (data) {
+                        alert("Ah Ocurrido un error porfavor espero unos muntos y vuelva a internarlo");
+                    }
+
+                });
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -20,8 +88,8 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-link" href="#" style="color:#DADADA;">Home</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">My Groups</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">Log-Out</a>
+                    <a class="nav-link" href="MisGrupos.html" style="color:#DADADA;">My Groups</a>
+                    <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
                 </div>
             </div>
 
@@ -37,7 +105,8 @@
             <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavAltMarkup2">
                 <div class="navbar-nav text-end">
                     <a class="nav-link" href="#" style="color:#DADADA;">Profile</a>
-                    <a class="nav-link" href="#" style="color:#DADADA;">Log-Out</a>
+                    <a class="nav-link" style="color:#DADADA;" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">Help</a>
+                    <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
                 </div>
             </div>
     </nav>
@@ -56,7 +125,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h1 class="card-title">Unirse Grupo</h1>
-                        <a href="#" class="btn btn-primary">Ingresar</a>
+                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Ingresar</a>
                     </div>
                 </div>
             </div>
@@ -67,6 +136,56 @@
                         <a href="MisGrupos.html" class="btn btn-primary">Ingresar</a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Unete a un Grupo</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form style="margin-top: 50px;">
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label"
+                                style="font-family: Inknut Antiqua; font-size: 25px;">Id Grupo</label>
+                            <input type="text" class="form-control" id="idGrupo" aria-describedby="emailHelp"
+                                style="background-color: #E9E9E9;">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnUnirseGrupo">Unirse</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Escribenos</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form style="margin-top: 50px;">
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label"
+                                style="font-family: Inknut Antiqua; font-size: 25px;">Mensaje</label>
+                            <input type="text" class="form-control" id="Mensaje" aria-describedby="emailHelp"
+                                style="background-color: #E9E9E9;">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnMensaje">Enviar</button>
+                </div>
+                </form>
             </div>
         </div>
     </div>
