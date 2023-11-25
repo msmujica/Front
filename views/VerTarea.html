@@ -8,60 +8,48 @@
     <link rel="stylesheet" href="../CSS/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script>
+
+        function getDataUrl(name) {
+            return new URLSearchParams(window.location.search).get(name)
+        }
+
+        function IrCrear() {
+            var id = getDataUrl("id");
+            window.location.replace("CrearTarea.html?id=" + id);
+        }
+
         function VerModificar(id){
+            var idGrupo = getDataUrl("id")
+            window.location.replace("ModificarTarea.html?id=" + id + "&idGrupo=" + idGrupo)
+        }
+
+        function IrModificarGrupo(id){
             window.location.replace("ModificarGrupo.html?id=" + id)
         }
 
-        function VerTareasPorGrupo(id){
-            window.location.replace("VerTarea.html?id=" + id)
+        function Eliminar(id){
+            var idVerTarea = getDataUrl("id")
+
+            $(document).ready(function () {
+                jQuery.ajax({
+                    url: 'http://localhost:8001/api/v1/Tarea/' + id,
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                    },
+                    type: 'DELETE',
+                    success: function (data) {
+                        alert("Tarea Eliminado");
+                        location.href = "VerTarea.html?id=" + idVerTarea;
+                    },
+                    error: function (data) {
+                        alert("Invalido");
+                    }
+                });
+
+            });
         }
 
-        $(document).ready(function () {
-            jQuery.ajax({
-                url: 'http://localhost:8001/api/v1/MyGroups',
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
-                },
-                type: 'GET',
-                success: function (data) {
-                    if (data.lenght === 0) {
-                        $('#cards').append(
-                            '<p>No hay ningun grupo ingresado</p>' +
-                            '<a href="CrearGrupo.html" class="btn btn-primary">Ingresar</a>'
-                        );
-                    } else {
-                        data.forEach(element => {
-                        console.log(data);
-                        $('#cards').append(
-                            '<a onclick=VerTareasPorGrupo('+ element.id +')>' +
-                            '<div class="col-sm-4">' +
-                            '<div class="card">' +
-                            '<div class="card-body">' +
-                            '<h5 class="card-title">' + element.nombre + '</h5>' +
-                            '<p class="card-text">' + element.descripcion + '</p>' +
-                            '<a href="#" class="btn btn-primary" onclick=VerModificar(' + element.id + ')>Modificar</a>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '</a>');
-                    });
-                    }
-                },
-                error: function (data) {
-                    $('#Error').append(
-                            '<div class="col-sm-4">' +
-                            '<div class="card">' +
-                            '<div class="card-body">' +
-                            '<h5 class="card-title"> No hay nada</h5>' +
-                            '<p class="card-text">nasge</p>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>');
-                }
-            });
-        });
-
-        function Eliminar(id) {
+        function EliminarGrupo(id){
             $(document).ready(function () {
                 jQuery.ajax({
                     url: 'http://localhost:8001/api/v1/Grupo/' + id,
@@ -78,6 +66,103 @@
                     }
                 });
 
+            });
+        }
+
+        $(document).ready(function () {
+            var id = getDataUrl("id")
+
+            jQuery.ajax({
+                url: 'http://localhost:8001/api/v1/UserData/' + id,
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                },
+                type: 'GET',
+                success: function (data) {
+                    data.forEach(element => {
+                        if (element.Rol === "Administrador") {
+                            $('#menu').append(
+                                '<a href="#" class="btn btn-primary" onclick="IrCrear()">Crear Tarea</a>' +
+                                '<a href="#" class="btn btn-primary" onclick="IrModificarGrupo('+ id +')">Modificar Grupo</a>' +
+                                '<a href="#" class="btn btn-primary" onclick="EliminarGrupo('+ id +')">Eliminar Grupo</a>' 
+                            );
+                            return getData(element.Rol)
+                        } else {
+                            $('#menu').append(
+                                '<a>Precisas mejores permisos pa!</a>'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        function getData(Rol) {
+
+            var id = getDataUrl("id");
+
+            jQuery.ajax({
+                url: 'http://localhost:8001/api/v1/TareaReadForGroup/' + id,
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken")
+                },
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    if (data.length === 0) {
+                        $('#cards').append(
+                            '<p>No hay nada ingresado por favor ingresa alguna Tarea</p>'
+                        );
+                    } else {
+                        data.forEach(element => {
+                            if (Rol === "Administrador") {
+                                $('#cards').append(
+                                    '<div class="card text-center">' +
+                                    '<div class="card-header">' +
+                                    element.id +
+                                    '</div>' +
+                                    '<div class="card-body" id="Mod">' +
+                                    '<h5 class="card-title">' + element.Nombre + '</h5>' +
+                                    '<p class="card-text">' + element.Descripcion + '</p>' +
+                                    '<a class="btn btn-primary" onclick=VerModificar(' + element.id + ')>Modificar</a>' +
+                                    '<a class="btn btn-primary" onclick=Eliminar(' + element.id + ')>Eliminar</a>' +
+                                    '</div>' +
+                                    '<div class="card-footer text-muted">' +
+                                    element.FechaEntrega +
+                                    '</div>' +
+                                    '</div>'
+                                );
+                            } else {
+                                $('#cards').append(
+                                    '<div class="card text-center">' +
+                                    '<div class="card-header">' +
+                                    element.id +
+                                    '</div>' +
+                                    '<div class="card-body" id="Mod">' +
+                                    '<h5 class="card-title">' + element.Nombre + '</h5>' +
+                                    '<p class="card-text">' + element.Descripcion + '</p>' +
+                                    '</div>' +
+                                    '<div class="card-footer text-muted">' +
+                                    element.FechaEntrega +
+                                    '</div>' +
+                                    '</div>'
+                                );
+                            }
+                        });
+                    }
+                },
+                error: function (data) {
+                    $('#Error').append(
+                        '<div class="col-sm-4">' +
+                        '<div class="card">' +
+                        '<div class="card-body">' +
+                        '<h5 class="card-title"> Error</h5>' +
+                        '<p class="card-text">Por favor comunciarse con un administradors</p>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                }
             });
         }
     </script>
@@ -115,6 +200,13 @@
                 </div>
             </div>
     </nav>
+
+
+    <div class="container" style="margin-top: 50px;">
+        <div id="menu">
+
+        </div>
+    </div>
 
     <div class="container" style="margin-top: 50px;">
         <div class="row" id="cards">

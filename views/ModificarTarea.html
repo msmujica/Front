@@ -15,7 +15,9 @@
         $(document).ready(function () {
 
             var id = getDataUrl("id");
+            var idGrupo = getDataUrl("idGrupo");
             console.log(id)
+            console.log(idGrupo)
 
             $("#btnCrearTarea").click(function () {
                 var Nombre = $("#nombre").val();
@@ -30,16 +32,16 @@
                     "IdGrupo": IdGrupo
                 }
                 jQuery.ajax({
-                    url: 'http://localhost:8001/api/v1/TareaCreate',
+                    url: 'http://localhost:8001/api/v1/TareaModificate/' + id,
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("accessToken")
                     },
-                    type: 'POST',
+                    type: 'PUT',
                     data: data,
 
                     success: function (data) {
-                        alert("Tarea Creada");
-                        location.href = "VerTarea.html?id=" + id;
+                        alert("Tarea Modificada con Exito");
+                        location.href = "VerTarea.html?id=" + IdGrupo;
                     },
 
                     error: function (data) {
