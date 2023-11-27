@@ -18,21 +18,21 @@
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("accessToken")
                 },
-                type: 'POST',
+                type: 'GET',
 
                 error: function (data) {
                     $('#staticBackdrop').modal('toggle')
                 }
             });
 
-            var id = getDataUrl("id");
-            var idGrupo = getDataUrl("idGrupo");
-
             $("#btnCrearTarea").click(function () {
+
+                var id = getDataUrl("id");
+                var IdGrupo = getDataUrl("idGrupo");
+
                 var Nombre = $("#nombre").val();
                 var Descripcion = $("#descripcion").val();
                 var FechaEntrega = $("#fechaentrega").val();
-                var IdGrupo = id
 
                 var data = {
                     "Nombre": Nombre,

@@ -36,7 +36,7 @@
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("accessToken")
                 },
-                type: 'POST',
+                type: 'GET',
 
                 error: function (data) {
                     $('#staticBackdrop').modal('toggle')
@@ -57,7 +57,6 @@
                         );
                     } else {
                         data.forEach(element => {
-                            console.log(data);
                             $('#cards').append(
                                 '<div class="col-sm-4">' +
                                 '<div class="card">' +

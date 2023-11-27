@@ -22,13 +22,23 @@
             });
         }
 
+        function Profile(id) {
+            window.location.replace("ModificarUser.html?id=" + id)
+        }
+
         $(document).ready(function () {
             jQuery.ajax({
                 url: 'http://localhost:8000/api/v1/validate',
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("accessToken")
                 },
-                type: 'POST',
+                type: 'GET',
+
+                success: function (data) {
+                        $('#menus').append(
+                            '<a class="nav-link" onclick="Profile(' + data.id + ')" style="color:#DADADA;">Profile</a>'
+                        );
+                },
 
                 error: function (data) {
                     $('#staticBackdrop').modal('toggle')
@@ -115,8 +125,7 @@
                 <span class=""><img src="../IMG/person-circle.svg" alt="" width="30"></span>
             </button>
             <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavAltMarkup2">
-                <div class="navbar-nav text-end">
-                    <a class="nav-link" href="#" style="color:#DADADA;">Profile</a>
+                <div class="navbar-nav text-end" id="menus">
                     <a class="nav-link" style="color:#DADADA;" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop2">Help</a>
                     <a class="nav-link" onclick="LogOut()" style="color:#DADADA;">Log-Out</a>
